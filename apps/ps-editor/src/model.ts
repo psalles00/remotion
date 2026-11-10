@@ -438,11 +438,20 @@ export function applyCommand(
 						c.from >= left.from + left.duration &&
 						c.from + c.duration <= right.from,
 				);
-				requireEditable(middle);
+				const middleIds = new Set(middle.map((c) => c.id));
+				const middleLinks = new Set(
+					middle.flatMap((c) => (c.linkId === null ? [] : [c.linkId])),
+				);
+				const displaced = p.clips.filter(
+					(c) =>
+						middleIds.has(c.id) ||
+						(c.linkId !== null && middleLinks.has(c.linkId)),
+				);
+				requireEditable(displaced);
 				const leftFrom = left.from,
 					rightFrom = right.from,
 					delta = right.duration - left.duration;
-				for (const c of middle) c.from += delta;
+				for (const c of displaced) c.from += delta;
 				for (const c of leftGroup) c.from = rightFrom + delta;
 				for (const c of rightGroup) c.from = leftFrom;
 			}

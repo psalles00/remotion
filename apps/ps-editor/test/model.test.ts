@@ -271,3 +271,43 @@ test('command envelope refuses string booleans and unknown fields', () => {
 		} as any),
 	).toThrow();
 });
+
+function linkedMiddleFixture(): Project {
+	const p = fixture();
+	p.clips = [
+		clip('left', 0, 60),
+		clip('middle', 60, 60),
+		clip('right', 120, 90),
+	];
+	return applyCommand(p, {type: 'detach-audio', clipId: 'middle'});
+}
+test('unequal swap moves the middle clip and its linked audio exactly once', () => {
+	const p = linkedMiddleFixture(),
+		a = p.clips.find((c) => c.id !== 'middle' && c.linkId)!;
+	const n = applyCommand(p, {type: 'swap', clipId: 'left', targetId: 'right'});
+	expect(n.clips.find((c) => c.id === 'middle')?.from).toBe(90);
+	expect(n.clips.find((c) => c.id === a.id)?.from).toBe(90);
+	expect(n.clips.find((c) => c.id === a.id)?.sourceIn).toBe(a.sourceIn);
+	expect(n.clips.find((c) => c.id === 'left')?.from).toBe(150);
+	expect(p.clips.find((c) => c.id === 'middle')?.from).toBe(60);
+});
+test('locked audio partner of middle clip refuses the whole swap', () => {
+	const p = linkedMiddleFixture(),
+		a = p.clips.find((c) => c.id !== 'middle' && c.linkId)!;
+	p.tracks.find((t) => t.id === a.trackId)!.locked = true;
+	expect(() =>
+		applyCommand(p, {type: 'swap', clipId: 'left', targetId: 'right'}),
+	).toThrow('bloqueada');
+	expect(p.clips.find((c) => c.id === 'left')?.from).toBe(0);
+	expect(p.clips.find((c) => c.id === 'middle')?.from).toBe(60);
+});
+test('collision on linked middle audio track refuses the whole swap', () => {
+	const p = linkedMiddleFixture(),
+		a = p.clips.find((c) => c.id !== 'middle' && c.linkId)!;
+	p.clips.push({...clip('audio-tail', 120, 60, 0, a.trackId)});
+	expect(() =>
+		applyCommand(p, {type: 'swap', clipId: 'left', targetId: 'right'}),
+	).toThrow('outro clipe');
+	expect(p.clips.find((c) => c.id === 'middle')?.from).toBe(60);
+	expect(p.clips.find((c) => c.id === a.id)?.from).toBe(60);
+});
