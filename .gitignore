@@ -55,3 +55,15 @@ packages/example-videos/videos/music.mp3
 packages/example-videos/videos/iphone-hevc.mov
 packages/example-videos/videos/stretched-vp8.webm
 packages/example-videos/videos/edts.mp4
+
+# Personal local editor runtime and user projects
+/apps/ps-editor/node_modules/
+/apps/ps-editor/dist/
+/apps/ps-editor/local-data/
+/apps/ps-editor/test-results/
+/apps/ps-editor/playwright-report/
+/work/
+/apps/ps-editor/.playwright-cli/
+/apps/ps-editor/work/
+
+/apps/ps-editor/.runtime/

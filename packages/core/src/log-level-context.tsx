@@ -1,6 +1,5 @@
-import {createContext} from 'react';
+import {createContext, useContext} from 'react';
 import type {LogLevel} from './log';
-import React = require('react');
 
 export type LoggingContextValue = {
 	logLevel: LogLevel | null;
@@ -13,7 +12,7 @@ export const LogLevelContext = createContext<LoggingContextValue>({
 });
 
 export const useLogLevel = (): LogLevel => {
-	const {logLevel} = React.useContext(LogLevelContext);
+	const {logLevel} = useContext(LogLevelContext);
 	if (logLevel === null) {
 		throw new Error('useLogLevel must be used within a LogLevelProvider');
 	}
@@ -22,7 +21,7 @@ export const useLogLevel = (): LogLevel => {
 };
 
 export const useMountTime = (): number => {
-	const {mountTime} = React.useContext(LogLevelContext);
+	const {mountTime} = useContext(LogLevelContext);
 	if (mountTime === null) {
 		throw new Error('useMountTime must be used within a LogLevelProvider');
 	}

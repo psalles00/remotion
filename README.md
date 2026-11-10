@@ -1,3 +1,9 @@
+## Remotion PS — editor pessoal
+
+Esta fork acrescenta o editor visual local em [`apps/ps-editor`](apps/ps-editor/README.md), com hover de vídeo/áudio, cortes, Slip e comandos para agentes. Abra **Iniciar Remotion PS.command** na raiz. Veja as instruções, limites e validação no README do editor.
+
+---
+
 <p align="center">
   <a href="https://www.remotion.dev/">
     <picture>
